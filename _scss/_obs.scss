@@ -1,0 +1,77 @@
+$color_1: #6de862;
+$color_2: #f6f4f2;
+$background-color_1: #373737;
+
+/********** Observations **********/
+#obs {
+	width: 95%;
+	margin: 50px auto;
+	.obs-box {
+		width: 620px;
+		margin: 0 auto;
+		min-height: 200px;
+		&::before {
+			content: "";
+			position: absolute;
+			width: 450px;
+			height: 35px;
+			background-color: $background-color_1;
+			top: 20px;
+			left: -70px;
+			z-index: -1;
+		}
+	}
+}
+.obs-box {
+    h1 {
+        font-size: 2em;
+    }
+	.taxon {
+		border: 2px solid #dbdbdb;
+		width: 225px;
+		height: 75px;
+		text-align: center;
+		cursor: pointer;
+		margin: 15px 30px;
+		&::before {
+			content: "";
+			position: absolute;
+			width: 225px;
+			height: 75px;
+			background-color: $background-color_1;
+			top: 10px;
+			left: 10px;
+			z-index: -1;
+		}
+		&:hover {
+			border-bottom-right-radius: 20px;
+			&::before {
+				border-bottom-right-radius: 20px;
+			}
+			h2 {
+				color: $color_1;
+			}
+		}
+		a {
+			color: $color_2;
+			text-decoration: none;
+		}
+	}
+}
+@media (max-width: 655px) {
+	#obs {
+		.obs-box {
+			width: 95%;
+		}
+	}
+	.sm-wrap {
+		flex-wrap: wrap;
+	}
+}
+@media (max-width: 575px) {
+	.obs-box {
+		.taxon {
+			margin: 20px 30px;
+		}
+	}
+}

@@ -1,0 +1,64 @@
+$color_1: #f6f4f2;
+$color_2: #6de862;
+$background-color_1: #373737;
+
+/********** Réalisations **********/
+#real {
+	width: 95%;
+	margin: 50px auto;
+	.real-box {
+		width: 60%;
+		margin: 0 auto;
+		min-height: 200px;
+		&::before {
+			content: "";
+			position: absolute;
+			width: 450px;
+			height: 35px;
+			background-color: $background-color_1;
+			top: 20px;
+			left: -70px;
+			z-index: -1;
+		}
+	}
+}
+.real-box {
+    h1 {
+        font-size: 1.8em;
+    }
+	.article {
+		border: 2px solid #dbdbdb;
+		width: 100%;
+		min-height: 100px;
+		text-align: center;
+		margin: 15px 30px;
+		&::before {
+			content: "";
+			position: absolute;
+			width: 570px;
+			height: 40px;
+			top: 6px;
+			left: -147px;
+			z-index: -1;
+			border: 24px solid #373737;
+		}
+		a {
+			color: $color_1;
+			text-decoration: none;
+		}
+		h2 {
+			&:hover {
+				a {
+					color: $color_2 !important;
+				}
+			}
+		}
+	}
+}
+@media (max-width: 1160px) {
+	#real {
+		.real-box {
+			width: 100%;
+		}
+	}
+}

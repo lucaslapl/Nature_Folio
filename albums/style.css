@@ -1,0 +1,118 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    background: #fafafa;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 1em;
+}
+
+.albums {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.album {
+    display: block;
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s;
+}
+
+.album:hover {
+    transform: scale(1.05);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.gallery img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: #007BFF;
+}
+
+/* --- Lightbox corrigé --- */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  justify-content: center;
+  align-items: center;
+  overflow: auto; /* permet le scroll si image très grande */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.lightbox:target {
+  display: flex;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100vh;
+  height: auto;
+  width: auto;
+  margin: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+  object-fit: contain; /* évite tout rognage */
+}
+
+.lightbox .close {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  color: white;
+  text-decoration: none;
+  font-size: 2em;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+.lightbox .nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 3em;
+  text-decoration: none;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.lightbox .prev { left: 20px; }
+.lightbox .next { right: 20px; }
+
+.lightbox .nav:hover,
+.lightbox .close:hover {
+  color: #ffcc00;
+}
