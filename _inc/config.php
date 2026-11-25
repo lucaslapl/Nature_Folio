@@ -2,15 +2,17 @@
 
 error_reporting(E_ALL);
 
-$env = parse_ini_file(__DIR__ . '/.env');
+// Configuration via variables d'environnement (définies dans docker-compose.yml)
+$dbDsn = getenv("DB_DSN");
+$dbUsername = getenv("DB_USERNAME");
+$dbPassword = getenv("DB_PASSWORD");
 
-// Les variables d'environnement (Docker) priment sur le fichier .env
-define("DB_DSN", getenv("DB_DSN") ?: $env["DB_DSN"]);
-define("DB_USERNAME", getenv("DB_USERNAME") ?: $env["DB_USERNAME"]);
-define("DB_PASSWORD", getenv("DB_PASSWORD") ?: $env["DB_PASSWORD"]);
+if ($dbDsn === false || $dbUsername === false) {
+    die("Configuration manquante : les variables d'environnement DB_DSN et DB_USERNAME doivent être définies (voir docker-compose.yml).");
+}
 
 try {
-    $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"));
+    $conn = new PDO($dbDsn, $dbUsername, $dbPassword, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"));
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Échec lors de la connexion : " . $e->getMessage());
