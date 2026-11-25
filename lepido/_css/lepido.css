@@ -1,216 +1,241 @@
-/******* Header **********/
-#lepido-head {
-  width: 95%;
-  margin: 64px auto;
-}
-#lepido-head h1 {
-  margin-left: 200px;
-  font-size: 2.4em;
-}
-#lepido-head h1::before {
-  content: "";
-  position: absolute;
-  width: 245px;
-  height: 55px;
-  background-color: #373737;
-  top: -20px;
-  left: -40px;
-  z-index: -1;
+:root {
+    --bg: #070707;
+    --surface: #0f0f0f;
+    --text-main: #ffffff;
+    --text-muted: #666666;
+    --neon-green: #a0ff8e;
+    --border: #1a1a1a;
+    --row-hover: #141414;
+    --transition: all 0.2s ease;
 }
 
-@media (max-width: 720px) {
-  #lepido-head h1 {
-    margin-left: 10%;
-  }
-}
-/******** Liste Oiseaux ********/
-#lepido-list {
-  width: 95%;
-  margin: 64px auto;
-}
-#lepido-list .filters {
-  background-color: #393939;
-}
-#lepido-list ul {
-  margin: 32px 120px;
-}
-#lepido-list ul::before {
-  content: "";
-  position: absolute;
-  width: 25px;
-  height: 100%;
-  background-color: #373737;
-  top: 0px;
-  left: -35px;
-  z-index: -1;
-}
-#lepido-list ul li {
-  padding: 7px 10px;
-  border-radius: 5px;
-  transition: 0.1s;
-  cursor: pointer;
-}
-#lepido-list ul li:hover {
-  background-color: #393939;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
 }
 
-.li-active {
-  border: 1px solid #69c874;
+header {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2rem;
 }
 
-.lepidoname {
-  width: 580px;
-  font-size: 1.1em;
+.breadcrumb {
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
-.fa-camera {
-  opacity: 0.8;
-  float: right;
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -1px; }
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
 }
 
-.lepidocontent {
-  display: none;
-  position: fixed;
-  width: 50%;
-  height: 100%;
-  top: 0;
-  right: -51%;
-  background-color: #333;
-  z-index: 99;
-  box-shadow: 0px 0px 20px #202020;
-  cursor: default;
-  overflow: scroll;
-}
-.lepidocontent .fa-angles-right {
-  color: #ddd;
-  cursor: pointer;
-  margin: 5px;
-}
-.lepidocontent .lepidoinfo {
-  margin: 32px;
-}
-.lepidocontent .lepidoinfo h1 {
-  font-size: 2.7em;
-}
-.lepidocontent .lepidoinfo .lepido-desc {
-  padding: 5px 20px;
-  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.3607843137);
-  background: #2f2f2f;
-}
+.search-container { margin-bottom: 2rem; }
 
-.hesperide {
-  background-color: #585082;
-  padding: 3px 9px;
-  border-radius: 10px;
-}
-
-.pieride, .papilionide {
-  background-color: #427d40;
-  padding: 3px 9px;
-  border-radius: 10px;
-}
-
-.lycenide {
-  background-color: #1e8686;
-  padding: 3px 9px;
-  border-radius: 10px;
-}
-
-.nymphalide {
-  background-color: #b97436;
-  padding: 3px 9px;
-  border-radius: 10px;
-}
-
-.commun {
-  background-color: #008400;
-  padding: 5px 11px;
-  border-radius: 13px;
-}
-
-.peu-commun {
-  background-color: #848200;
-  padding: 5px 11px;
-  border-radius: 13px;
-}
-
-.rare {
-  background-color: #844a00;
-  padding: 5px 11px;
-  border-radius: 13px;
-}
-
-.tres-rare {
-  background-color: #840000;
-  padding: 5px 11px;
-  border-radius: 13px;
-}
-
-.lepidocontent .lepidoinfo p > a {
-  color: #6de862;
-  text-decoration: underline;
-}
-.lepidocontent .lepidoinfo p > a:hover {
-  color: #fff;
-}
-
-@media (max-width: 1500px) {
-  #lepido-list {
-    margin: unset;
-  }
-  #lepido-list ul {
-    margin: 32px 45px;
-  }
-  .famille {
-    display: none;
-  }
-}
-@media (max-width: 945px) {
-  .lepidocontent {
-    width: 75%;
-  }
-}
-@media (max-width: 789px) {
-  #lepido-list {
+#searchInput {
     width: 100%;
-  }
-  #lepido-list ul li {
-    margin: 7px 0;
-    padding: 10px;
-    border: 1px solid #313131;
-  }
-  .lepidocontent {
-    width: 100%;
-  }
-  .lepidocontent .fa-angles-right {
-    color: #fff;
-    font-size: 4em;
-    margin: unset;
-    padding: 7px;
-  }
-  .lepidoinfo span {
-    text-wrap: nowrap;
-    line-height: 2.5em;
-  }
-}
-@media (max-width: 640px) {
-  #lepido-list ul {
-    margin: 32px 10px;
-  }
-  #lepido-list ul::before {
-    left: -30px;
-  }
-  .lepidocontent .fa-angles-right {
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.2901960784);
-    z-index: 100;
-  }
-  .lepidoinfo h1 {
-    margin-top: 80px;
-  }
-  .img-status img {
-    width: 100%;
-  }
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    color: white;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition);
 }
 
-/*# sourceMappingURL=lepido.css.map */
+#searchInput:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(160, 255, 142, 0.1); }
+
+.species-list {
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+}
+
+.species-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+}
+
+.species-row:hover {
+    background-color: var(--row-hover);
+    padding-left: 2rem;
+}
+
+.species-row::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--neon-green);
+    transform: scaleY(0);
+    transition: var(--transition);
+}
+
+.species-row:hover::before {
+    transform: scaleY(1);
+}
+
+.name-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.common-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+}
+
+.scientific-name {
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+.family-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(var(--tag-color, 102, 102, 102), 0.8);
+    background: rgba(var(--tag-color, 102, 102, 102), 0.06);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(var(--tag-color, 102, 102, 102), 0.2);
+    transition: var(--transition);
+}
+
+.species-row:hover .family-tag {
+    color: rgb(var(--tag-color, 160, 255, 142));
+    border-color: rgba(var(--tag-color, 160, 255, 142), 0.4);
+    background: rgba(var(--tag-color, 160, 255, 142), 0.1);
+}
+
+.arrow {
+    margin-left: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--border);
+    transition: var(--transition);
+}
+
+.species-row:hover .arrow {
+    color: var(--neon-green);
+    transform: translateX(5px);
+}
+
+.species-row.active .arrow {
+    transform: rotate(90deg);
+    color: var(--neon-green);
+}
+
+.species-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: var(--transition);
+    background-color: #0c0c0c;
+    opacity: 0;
+}
+
+.species-item.open .species-details {
+    max-height: 500px;
+    opacity: 1;
+    border-top: 1px solid #1a1a1a;
+}
+
+.details-inner {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2rem;
+}
+
+.detail-img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    filter: grayscale(0.2);
+    background-color: #111;
+    min-height: 120px;
+}
+
+.detail-info h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--neon-green);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.detail-info p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+}
+
+.meta-item span { display: block; color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
+
+.home-link {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: var(--transition);
+}
+
+.home-link:hover {
+    opacity: 0.7;
+}
+
+footer {
+    padding: 4rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+footer a {
+    color: var(--neon-green);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .details-inner { grid-template-columns: 1fr; }
+    .detail-img { height: 150px; object-fit: cover; }
+}
