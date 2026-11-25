@@ -33,7 +33,7 @@ $countLepido = count_species($conn, 'lepido');
                     <img src="_imgs/rousserolle.svg" alt="">
                 </div>
                 <h2>Oiseaux <span class="count"><?= $countOiseaux ?></span></h2>
-                <p>Observations ornithologiques, photos et fiches INPN.</p>
+                <p>Observations ornithologiques et leurs photographies.</p>
                 <span class="go">Explorer &rarr;</span>
             </a>
 
