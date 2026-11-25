@@ -17,7 +17,10 @@ La base est initialisée automatiquement depuis `_docker/naturanim_dump.sql` (ta
 
 ## Configuration
 
-Toutes les variables passent par le fichier `.env` (voir `.env.example`) :
+Toutes les variables passent par le fichier `.env` à la racine (voir `.env.example`).
+
+- **Avec Docker** : `docker-compose.yml` injecte `.env` via `env_file`.
+- **Hors Docker** (prod Apache/PHP direct) : `_inc/env.php` lit automatiquement `.env` à la racine si les variables ne sont pas déjà dans l'environnement. Le fichier `.env` est protégé (403) par le `.htaccess`.
 
 | Variable | Rôle |
 |---|---|

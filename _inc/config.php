@@ -5,6 +5,15 @@ declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
+require_once __DIR__ . '/env.php';
+
+// Fallback hors Docker : si les variables ne sont pas injectées dans
+// l'environnement (docker-compose le fait via env_file), on lit .env
+// à la racine du projet. Les variables déjà définies ne sont pas écrasées.
+if (getenv('DB_DSN') === false) {
+    load_env_file(__DIR__ . '/../.env');
+}
+
 // --- Base de données (via variables d'environnement, voir .env / docker-compose.yml) ---
 $dbDsn = getenv('DB_DSN');
 $dbUsername = getenv('DB_USERNAME');
