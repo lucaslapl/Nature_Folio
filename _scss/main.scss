@@ -1,196 +1,642 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+// ============================================================
+//  Nature Folio — thème clair
+// ============================================================
 
-$bg: #0a0a0a;
-$surface: #141414;
-$text-main: #ffffff;
-$text-muted: #a0a0a0;
-$neon-green: #a0ff8e;
-$neon-glow: rgba(160, 255, 142, 0.2);
-$border: #252525;
-$transition: all 0.3s ease;
+@use "sass:color";
+
+$bg: #f7f6f2;            // crème très clair
+$surface: #ffffff;       // cartes
+$text: #22271f;          // gris-vert foncé
+$muted: #6b7264;         // texte secondaire
+$accent: #3d6b35;        // vert forêt
+$accent-soft: #e8efe2;   // fond vert très clair
+$border: #e4e1d8;
+$tag-bg: #f0efe9;
+$danger: #b3261e;
+$radius: 10px;
+$shadow: 0 1px 2px rgba(34, 39, 31, 0.06), 0 4px 14px rgba(34, 39, 31, 0.06);
+$transition: all 0.2s ease;
 
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-	font-family: 'Inter', sans-serif;
-	background-color: $bg;
-	color: $text-main;
-	line-height: 1.6;
-	overflow-x: hidden;
-
-	header {
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 5rem 2rem 3rem;
-		position: relative;
-		z-index: 2;
-
-		.profile-header {
-			display: flex;
-			align-items: center;
-			gap: 2rem;
-
-			h1 {
-				font-size: 2.5rem;
-				font-weight: 800;
-				letter-spacing: -0.04em;
-				line-height: 1;
-			}
-
-			.subtitle {
-				color: $neon-green;
-				font-size: 0.8rem;
-				font-weight: 600;
-				letter-spacing: 0.3em;
-				text-transform: uppercase;
-				margin-top: 0.5rem;
-				display: block;
-			}
-		}
-	}
-
-	main {
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 2rem;
-		position: relative;
-		z-index: 2;
-
-		.intro {
-			font-size: 1.4rem;
-			font-weight: 300;
-			color: $text-muted;
-			max-width: 700px;
-			margin-bottom: 6rem;
-
-			strong {
-				color: $text-main;
-				border-bottom: 2px solid $neon-green;
-			}
-		}
-
-		.section-label {
-			display: flex;
-			align-items: center;
-			gap: 1rem;
-			margin-bottom: 2.5rem;
-
-			span {
-				font-size: 0.7rem;
-				font-weight: 700;
-				text-transform: uppercase;
-				letter-spacing: 0.2em;
-				color: $neon-green;
-			}
-
-			.line {
-				height: 1px;
-				flex-grow: 1;
-				background: linear-gradient(90deg, $neon-green, transparent);
-				opacity: 0.3;
-			}
-		}
-
-		.grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			gap: 1.5rem;
-			margin-bottom: 6rem;
-
-			.card {
-				background: $surface;
-				border: 1px solid $border;
-				padding: 2.5rem;
-				border-radius: 12px;
-				text-decoration: none;
-				color: inherit;
-				transition: $transition;
-				position: relative;
-				overflow: hidden;
-
-				&:hover {
-					border-color: $neon-green;
-					transform: translateY(-5px);
-					box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-
-					&::before {
-						transform: scaleX(1);
-					}
-
-				}
-
-				&::before {
-					content: "";
-					position: absolute;
-					top: 0;
-					left: 0;
-					width: 100%;
-					height: 2px;
-					background: $neon-green;
-					transform: scaleX(0);
-					transform-origin: left;
-					transition: $transition;
-				}
-
-				h3 {
-					font-size: 1.5rem;
-					margin-bottom: 0.75rem;
-					span {
-						color: $neon-green;
-					}
-				}
-
-				p {
-					color: $text-muted;
-					font-size: 0.95rem;
-					font-weight: 300;
-				}
-
-				.status-dot {
-					display: inline-block;
-					width: 8px;
-					height: 8px;
-					background: $neon-green;
-					border-radius: 50%;
-					margin-right: 8px;
-					box-shadow: 0 0 10px $neon-green;
-				}
-
-				.card-status {
-					margin-top: 1.5rem;
-					font-size: 0.7rem;
-					color: $neon-green;
-				}
-			}
-		}
-	}
-
-	footer {
-		padding: 6rem 2rem;
-		text-align: center;
-		border-top: 1px solid $border;
-		font-size: 0.8rem;
-		color: $text-muted;
-
-		a {
-			color: $neon-green;
-			text-decoration: none;
-			font-weight: 600;
-		}
-	}
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: $bg;
+    color: $text;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+a {
+    color: $accent;
+}
 
-@media (max-width: 768px) {
-	h1 {
-		font-size: 1.8rem;
-	}
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+}
 
-	.intro {
-		font-size: 1.1rem;
-	}
+.container-narrow {
+    max-width: 760px;
+}
+
+// ---------- Header ----------
+.site-header {
+    padding: 3.5rem 0 2rem;
+
+    h1 {
+        font-size: 2.1rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+
+    .subtitle {
+        color: $accent;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-top: 0.4rem;
+    }
+
+    .breadcrumb {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: $muted;
+        margin-bottom: 0.5rem;
+    }
+
+    .home-link {
+        display: inline-block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        color: $muted;
+        margin-bottom: 1rem;
+
+        &:hover {
+            color: $accent;
+        }
+    }
+}
+
+main {
+    flex: 1;
+    padding-bottom: 4rem;
+}
+
+// ---------- Accueil ----------
+.intro {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: $muted;
+    max-width: 640px;
+    margin-bottom: 3.5rem;
+
+    strong {
+        color: $text;
+        font-weight: 600;
+        border-bottom: 2px solid $accent;
+    }
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+
+    span {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: $accent;
+    }
+
+    .line {
+        height: 1px;
+        flex-grow: 1;
+        background: $border;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.card {
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius;
+    padding: 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: $shadow;
+    transition: $transition;
+
+    &:hover {
+        transform: translateY(-3px);
+        border-color: $accent;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+
+        .count {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: $accent;
+            background: $accent-soft;
+            border-radius: 999px;
+            padding: 0.1rem 0.6rem;
+        }
+    }
+
+    p {
+        color: $muted;
+        font-size: 0.92rem;
+    }
+}
+
+// ---------- Liste d'espèces ----------
+.search-container {
+    margin-bottom: 1.5rem;
+}
+
+#searchInput {
+    width: 100%;
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: $text;
+    outline: none;
+    transition: $transition;
+
+    &:focus {
+        border-color: $accent;
+        box-shadow: 0 0 0 3px rgba(61, 107, 53, 0.12);
+    }
+}
+
+.species-list {
+    border-top: 1px solid $border;
+}
+
+.species-item {
+    border-bottom: 1px solid $border;
+}
+
+.species-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    background: none;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: $transition;
+
+    &:hover {
+        background: $surface;
+    }
+
+    .name-group {
+        display: flex;
+        flex-direction: column;
+
+        .common-name {
+            font-weight: 600;
+            font-size: 1.02rem;
+        }
+
+        .scientific-name {
+            font-style: italic;
+            font-size: 0.84rem;
+            color: $muted;
+        }
+    }
+
+    .row-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .family-tag {
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: rgba(var(--tag-color, 107, 114, 128), 0.9);
+        background: rgba(var(--tag-color, 107, 114, 128), 0.08);
+        border: 1px solid rgba(var(--tag-color, 107, 114, 128), 0.18);
+        padding: 3px 9px;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+
+    .arrow {
+        font-size: 0.7rem;
+        color: $muted;
+        transition: $transition;
+    }
+
+    &.active .arrow {
+        transform: rotate(90deg);
+        color: $accent;
+    }
+}
+
+.species-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.species-item.open .species-details {
+    max-height: 600px;
+    opacity: 1;
+}
+
+.details-inner {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.75rem;
+    padding: 1.5rem 1rem 2rem;
+    background: $surface;
+    border-radius: $radius;
+    margin: 0.25rem 0 1rem;
+    border: 1px solid $border;
+
+    .detail-link {
+        display: block;
+    }
+
+    .detail-img {
+        width: 100%;
+        border-radius: 8px;
+        display: block;
+        cursor: zoom-in;
+    }
+
+    .detail-info {
+        h4 {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: $accent;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: $muted;
+            margin-bottom: 0.75rem;
+        }
+
+        .inpn-link {
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+
+            .meta-item span {
+                display: block;
+                color: $muted;
+                font-size: 0.68rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 0.15rem;
+            }
+        }
+    }
+}
+
+.no-result {
+    text-align: center;
+    color: $muted;
+    padding: 2rem 0;
+}
+
+// ---------- Lightbox ----------
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 22, 18, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 100;
+
+    &.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .lightbox-img {
+        max-width: min(1000px, 92vw);
+        max-height: 82vh;
+        border-radius: 8px;
+    }
+
+    .lightbox-caption {
+        color: #e8e6df;
+        font-size: 0.9rem;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 2rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+}
+
+// ---------- Formulaires (admin) ----------
+.form-card {
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    padding: 2rem;
+    max-width: 620px;
+    margin: 0 auto;
+
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.1rem;
+
+    label {
+        display: block;
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: $muted;
+        margin-bottom: 0.35rem;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="date"],
+    input[type="password"],
+    select,
+    textarea {
+        width: 100%;
+        background: $bg;
+        border: 1px solid $border;
+        border-radius: 8px;
+        padding: 0.65rem 0.85rem;
+        font-family: inherit;
+        font-size: 0.92rem;
+        color: $text;
+        outline: none;
+        transition: $transition;
+
+        &:focus {
+            border-color: $accent;
+            box-shadow: 0 0 0 3px rgba(61, 107, 53, 0.12);
+        }
+    }
+
+    input[type="file"] {
+        font-size: 0.85rem;
+        color: $muted;
+    }
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: $accent;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+        background: color.adjust($accent, $lightness: -6%);
+    }
+}
+
+.form-card .btn-primary {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.btn-ghost {
+    background: none;
+    border: 1px solid $accent;
+    color: $accent;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+        background: $accent-soft;
+    }
+}
+
+.alert {
+    background: #fdecea;
+    border: 1px solid #f5c6c0;
+    color: $danger;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.88rem;
+    margin-bottom: 1.25rem;
+
+    &.success {
+        background: $accent-soft;
+        border-color: #cfe0c6;
+        color: $accent;
+    }
+}
+
+.back {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+
+    a {
+        text-decoration: none;
+        &:hover { text-decoration: underline; }
+    }
+}
+
+// ---------- Login ----------
+.login-page {
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 380px;
+
+    h1 {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: $muted;
+        margin-bottom: 0.4rem;
+    }
+
+    input[type="password"] {
+        width: 100%;
+        background: $bg;
+        border: 1px solid $border;
+        border-radius: 8px;
+        padding: 0.7rem 0.9rem;
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        margin-bottom: 1.25rem;
+
+        &:focus {
+            border-color: $accent;
+            box-shadow: 0 0 0 3px rgba(61, 107, 53, 0.12);
+        }
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .back {
+        margin-top: 1.25rem;
+    }
+}
+
+// ---------- Footer ----------
+.site-footer {
+    border-top: 1px solid $border;
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: $muted;
+
+    a {
+        font-weight: 600;
+        text-decoration: none;
+        &:hover { text-decoration: underline; }
+    }
+}
+
+// ---------- Responsive ----------
+@media (max-width: 640px) {
+    .site-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .intro {
+        font-size: 1.05rem;
+    }
+
+    .details-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-img {
+        max-height: 220px;
+        object-fit: cover;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .species-row .row-right {
+        gap: 0.5rem;
+    }
 }

@@ -33,15 +33,15 @@ CREATE TABLE `lepido` (
   `nom_latin` varchar(255) NOT NULL,
   `famille` varchar(255) NOT NULL,
   `rarete` varchar(255) NOT NULL,
-  `repartition` varchar(255) NOT NULL,
+  `repartition` text NOT NULL,
   `description` text NOT NULL,
-  `premiere_obs` date NOT NULL,
+  `premiere_obs` date DEFAULT NULL,
   `lien_inpn` varchar(255) NOT NULL,
   `image_path` varchar(255) NOT NULL,
   `image_path_min` varchar(255) NOT NULL,
-  `date_obs` date NOT NULL,
+  `date_obs` date DEFAULT NULL,
   `lieu_obs` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `lepido`
@@ -111,15 +111,15 @@ CREATE TABLE `oiseaux` (
   `nom_latin` varchar(255) NOT NULL,
   `famille` varchar(255) NOT NULL,
   `rarete` varchar(255) NOT NULL,
-  `repartition` varchar(255) NOT NULL,
+  `repartition` text NOT NULL,
   `description` text NOT NULL,
-  `premiere_obs` date NOT NULL,
+  `premiere_obs` date DEFAULT NULL,
   `lien_inpn` varchar(255) NOT NULL,
   `image_path` varchar(255) NOT NULL,
   `image_path_min` varchar(255) NOT NULL,
-  `date_obs` date NOT NULL,
+  `date_obs` date DEFAULT NULL,
   `lieu_obs` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `oiseaux`

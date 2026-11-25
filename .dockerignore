@@ -1,4 +1,9 @@
 .git
 .gitignore
 .dockerignore
-_docker
+.env
+node_modules/
+_docker/
+package.json
+package-lock.json
+_scss/

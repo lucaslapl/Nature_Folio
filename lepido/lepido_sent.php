@@ -1,103 +1,52 @@
-<html>
-<head>
-<meta name="robots" content="noindex">
-</head>
-<body>
 <?php
-include_once("../_inc/config.php");
 
-$folder = "_photos/";
-$name = htmlspecialchars($_POST["name"], ENT_QUOTES);
-$namelatin = htmlspecialchars($_POST["namelatin"], ENT_QUOTES);
-$famille = htmlspecialchars($_POST["famille"], ENT_QUOTES);
-$rarete = $_POST["rarete"];
-$repartition = htmlspecialchars($_POST["repartition"], ENT_QUOTES);
-$description = htmlspecialchars($_POST["description"], ENT_QUOTES);
-$first_obs = $_POST["first-obs"];
-$ficheinpn = htmlspecialchars($_POST["lien-inpn"], ENT_QUOTES);
-$datephoto = $_POST["date-photo"];
-$lieuphoto = htmlspecialchars($_POST["lieu-photo"], ENT_QUOTES);
+declare(strict_types=1);
 
-$image = $folder . time() . "_" . basename($_FILES["imgMain"]["name"]);
-$imageMin = $folder . time() . "_" . basename($_FILES["imgMini"]["name"]);
+require_once __DIR__ . '/../_inc/config.php';
+require_once __DIR__ . '/../_inc/functions.php';
+require_once __DIR__ . '/../_inc/auth.php';
+require_once __DIR__ . '/../_inc/upload.php';
 
-// Vérifier si le formulaire a été soumis
-if (isset($_POST["submit"])) {
+require_login();
 
-    // Vérification des types de fichiers et taille des fichiers
-    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!in_array($_FILES["imgMini"]["type"], $allowed_types) || !in_array($_FILES["imgMain"]["type"], $allowed_types)) {
-        echo "Type de fichier non autorisé. Seuls les fichiers JPEG, PNG, GIF sont acceptés.";
-        exit;
-    }
-
-    if ($_FILES["imgMini"]["size"] > 2000000 || $_FILES["imgMain"]["size"] > 2000000) {
-        echo "La taille de l'image ne doit pas dépasser 2 Mo.";
-        exit;
-    }
-
-    // Upload des fichiers
-    if (move_uploaded_file($_FILES["imgMini"]["tmp_name"], $imageMin) && move_uploaded_file($_FILES["imgMain"]["tmp_name"], $image)) {
-
-        try {
-            // Insertion des informations dans la base de données avec requête préparée
-            $insert_query = "INSERT INTO lepido (
-                nom, 
-                nom_latin, 
-                famille, 
-                rarete, 
-                repartition, 
-                description, 
-                premiere_obs, 
-                lien_inpn, 
-                image_path, 
-                image_path_min,
-                date_obs,
-                lieu_obs) 
-                VALUES (
-                :name, 
-                :namelatin, 
-                :famille, 
-                :rarete, 
-                :repartition, 
-                :description, 
-                :first_obs,
-                :ficheinpn, 
-                :image, 
-                :imageMin, 
-                :datephoto,
-            	:lieuphoto)";
-
-            $stmt = $conn->prepare($insert_query);
-            $stmt->execute([
-                ':name' => $name,
-                ':namelatin' => $namelatin,
-                ':famille' => $famille,
-                ':rarete' => $rarete,
-                ':repartition' => $repartition,
-                ':description' => $description,
-                ':first_obs' => $first_obs,
-                ':ficheinpn' => $ficheinpn,
-                ':image' => $image,
-                ':imageMin' => $imageMin,
-                ':datephoto' => $datephoto,
-                ':lieuphoto' => $lieuphoto
-            ]);
-
-            // Redirection après le succès
-            header('Location: new_lepido.php');
-            exit;
-
-        } catch (PDOException $e) {
-            echo "Erreur lors de l'insertion dans la base de données : " . $e->getMessage();
-        }
-
-    } else {
-        echo "Désolé, une erreur est survenue lors du téléchargement des fichiers.";
-    }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['submit'])) {
+    header('Location: new_lepido.php');
+    exit;
 }
 
-$stmt = null;
-$conn = null;
+$result = handle_species_insert($conn, 'lepido', $_POST, $_FILES);
+
+if ($result['ok']) {
+    header('Location: new_lepido.php?success=1');
+    exit;
+}
+
+$error = $result['error'];
 ?>
- </body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <?php render_head([
+        'title' => 'Ajouter un lépidoptère — ' . SITE_NAME,
+        'path' => 'lepido/new_lepido.php',
+    ]); ?>
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <?php render_header('Ajouter un lépidoptère', false, 'Administration'); ?>
+    <main class="container container-narrow">
+        <?php
+        require_once __DIR__ . '/../_inc/species-form.php';
+        render_species_form(
+            action: 'lepido_sent.php',
+            entityLabel: 'un lépidoptère',
+            nameExample: 'Paon du jour',
+            nameLatinExample: 'Aglais io',
+            familleExample: 'Nymphalidé',
+            error: $error
+        );
+        ?>
+    </main>
+    <?php render_footer(); ?>
+</body>
+</html>

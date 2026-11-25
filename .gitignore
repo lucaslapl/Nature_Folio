@@ -1,5 +1,5 @@
 .env
-.htaccess
+node_modules/
 /_imgs
 /oiseaux/_photos
 /lepido/_photos

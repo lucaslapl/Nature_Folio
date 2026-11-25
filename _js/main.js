@@ -1,42 +1,97 @@
-history.scrollRestoration = "manual";
-
+// Filtre de recherche dans la liste des espèces
 function filterSpecies() {
     const input = document.getElementById('searchInput');
-    const filter = input.value.toLowerCase();
-    const items = document.getElementsByClassName('species-item');
+    if (!input) return;
+    const filter = input.value.toLowerCase().trim();
+    const items = document.querySelectorAll('.species-item');
+    let visible = 0;
 
-    for (let i = 0; i < items.length; i++) {
-        const commonName = items[i].querySelector('.common-name').textContent.toLowerCase();
-        const scientificName = items[i].querySelector('.scientific-name').textContent.toLowerCase();
+    items.forEach((item) => {
+        const common = item.querySelector('.common-name')?.textContent.toLowerCase() || '';
+        const scientific = item.querySelector('.scientific-name')?.textContent.toLowerCase() || '';
+        const show = filter === '' || common.includes(filter) || scientific.includes(filter);
+        item.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
 
-        if (commonName.includes(filter) || scientificName.includes(filter)) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
-        }
-    }
+    const noResult = document.getElementById('noResult');
+    if (noResult) noResult.hidden = visible !== 0;
 }
 
-function toggleSpecies(element) {
-    const parent = element.parentElement;
-    const willOpen = !parent.classList.contains('open');
-    element.classList.toggle('active');
-    parent.classList.toggle('open');
+// Accordéon : ouvre/ferme le détail d'une espèce, charge l'image en lazy
+function toggleSpecies(btn) {
+    const item = btn.closest('.species-item');
+    const willOpen = !item.classList.contains('open');
+
+    // Ferme les autres
+    document.querySelectorAll('.species-item.open').forEach((other) => {
+        if (other !== item) {
+            other.classList.remove('open');
+            other.querySelector('.species-row')?.classList.remove('active');
+            other.querySelector('.species-row')?.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    item.classList.toggle('open', willOpen);
+    btn.classList.toggle('active', willOpen);
+    btn.setAttribute('aria-expanded', String(willOpen));
 
     if (willOpen) {
-        const img = parent.querySelector('.detail-img[data-src]');
+        const img = item.querySelector('.detail-img[data-src]');
         if (img && !img.getAttribute('src')) {
             img.src = img.dataset.src;
         }
     }
 }
 
-$(document).ready(function () {
-    var lightbox = $('.details-inner a').simpleLightbox({
-        captions: true,
-        showCounter: false,
-        nav: false,
-        enableKeyboard: false,
-        scrollZoom: false
+// Lightbox vanilla : plein écran sur clic d'une image de détail
+(function initLightbox() {
+    const overlay = document.createElement('div');
+    overlay.className = 'lightbox-overlay';
+    overlay.innerHTML = '<button class="lightbox-close" aria-label="Fermer">&times;</button><img class="lightbox-img" alt=""><p class="lightbox-caption"></p>';
+    document.body.appendChild(overlay);
+
+    const imgEl = overlay.querySelector('.lightbox-img');
+    const captionEl = overlay.querySelector('.lightbox-caption');
+
+    function open(link) {
+        imgEl.src = link.getAttribute('href');
+        imgEl.alt = link.querySelector('img')?.alt || '';
+        captionEl.textContent = link.dataset.caption || '';
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        overlay.classList.remove('visible');
+        imgEl.src = '';
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('.detail-link');
+        if (link) {
+            e.preventDefault();
+            open(link);
+            return;
+        }
+        if (e.target === overlay || e.target.closest('.lightbox-close')) {
+            close();
+        }
     });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('visible')) close();
+    });
+})();
+
+// Bouton "auto-remplir la répartition" dans les formulaires admin
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('fillRepartition');
+    const textarea = document.getElementById('repartition');
+    if (btn && textarea) {
+        btn.addEventListener('click', () => {
+            textarea.value = btn.dataset.value || '';
+        });
+    }
 });

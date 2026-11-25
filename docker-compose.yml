@@ -4,10 +4,8 @@ services:
     container_name: nature_folio_web
     ports:
       - "8100:80"
-    environment:
-      DB_DSN: "mysql:host=db;dbname=nature_folio"
-      DB_USERNAME: nature_folio
-      DB_PASSWORD: nature_folio
+    env_file:
+      - .env
     volumes:
       # Les photos ne sont pas dans git : on monte les dossiers locaux
       - ./oiseaux/_photos:/var/www/html/oiseaux/_photos
@@ -20,16 +18,13 @@ services:
   db:
     image: mysql:8.4
     container_name: nature_folio_db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: nature_folio
-      MYSQL_USER: nature_folio
-      MYSQL_PASSWORD: nature_folio
+    env_file:
+      - .env
     volumes:
       - db_data:/var/lib/mysql
       - ./_docker/naturanim_dump.sql:/docker-entrypoint-initdb.d/naturanim_dump.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
       interval: 5s
       timeout: 5s
       retries: 20

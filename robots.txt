@@ -1,4 +1,8 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /oiseaux/new_bird.php
+Disallow: /oiseaux/bird_sent.php
+Disallow: /lepido/new_lepido.php
+Disallow: /lepido/lepido_sent.php
 
 Sitemap: https://nature.lucaslaplanche.fr/sitemap.xml
