@@ -4,9 +4,10 @@ error_reporting(E_ALL);
 
 $env = parse_ini_file(__DIR__ . '/.env');
 
-define("DB_DSN", $env["DB_DSN"]);
-define("DB_USERNAME", $env["DB_USERNAME"]);
-define("DB_PASSWORD", $env["DB_PASSWORD"]);
+// Les variables d'environnement (Docker) priment sur le fichier .env
+define("DB_DSN", getenv("DB_DSN") ?: $env["DB_DSN"]);
+define("DB_USERNAME", getenv("DB_USERNAME") ?: $env["DB_USERNAME"]);
+define("DB_PASSWORD", getenv("DB_PASSWORD") ?: $env["DB_PASSWORD"]);
 
 try {
     $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"));

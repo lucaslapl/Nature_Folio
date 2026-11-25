@@ -1,0 +1,5 @@
+.git
+.gitignore
+.dockerignore
+_inc/.env
+_docker
