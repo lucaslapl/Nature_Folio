@@ -59,20 +59,13 @@ _inc/                   Code partagé (NON servi directement, bloqué par .htacc
   species-form.php      Template du formulaire d'ajout
 admin/                  login.php / logout.php
 oiseaux/  lepido/       Listes publiques + formulaires admin + _photos/
-_scss/main.scss         Source du thème (clair)
-_css/main.css           CSS compilé (généré, ne pas éditer à la main)
+_css/main.css           Thème (clair) en CSS pur — édité directement, servi tel quel
 _js/main.js             Filtre, accordéon, lightbox (vanilla, sans dépendance)
 ```
 
-## Build CSS
+## CSS
 
-Le SCSS est compilé avec [sass](https://sass-lang.com/) :
-
-```bash
-npm install
-npm run css          # compile _scss/main.scss → _css/main.css (minifié)
-npm run css:watch    # mode watch
-```
+Le thème est en **CSS pur** (`_css/main.css`, servi directement par `_inc/functions.php`) : custom properties dans `:root`, nesting natif. Aucun build, aucune dépendance npm.
 
 ## Sécurité
 
