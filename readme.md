@@ -45,6 +45,10 @@ Les formulaires d'ajout d'espèces sont protégés par une session admin :
 
 Accès via `admin/login.php` (mot de passe défini par `ADMIN_PASSWORD_HASH`). Déconnexion : `admin/logout.php`.
 
+La session admin dure **7 jours** par défaut (cookie + `gc_maxlifetime`, surchargeable via
+`ADMIN_SESSION_LIFETIME` en secondes dans `.env`). En local Docker, les sessions PHP sont
+stockées dans `_docker/sessions/` (volume monté) : un rebuild du conteneur web ne déconnecte plus.
+
 - `admin/index.php` — hub admin (listes oiseaux / lépidoptères)
 - `admin/especes.php?table=oiseaux|lepido[&filtre=incomplets]` — liste des espèces avec badge de complétude (champs manquants) et lien « Modifier »
 - `admin/edit_espece.php?table=…&id=…` — édition d'une fiche existante : formulaire pré-rempli (la description structurée est re-découpée en champs guidés), images optionnelles (l'actuelle est conservée si on n'en renvoie pas), bouton « Pré-remplir via l'INPN » pour compléter les champs vides depuis TAXREF

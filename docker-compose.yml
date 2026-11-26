@@ -6,10 +6,15 @@ services:
       - "8100:80"
     env_file:
       - .env
+    environment:
+      # Sessions PHP persistantes (survit aux rebuilds du conteneur en local)
+      - PHP_SESSION_SAVE_PATH=/var/www/sessions
     volumes:
       # Les photos ne sont pas dans git : on monte les dossiers locaux
       - ./oiseaux/_photos:/var/www/html/oiseaux/_photos
       - ./lepido/_photos:/var/www/html/lepido/_photos
+      # Sessions admin persistantes en local
+      - ./_docker/sessions:/var/www/sessions
     depends_on:
       db:
         condition: service_healthy

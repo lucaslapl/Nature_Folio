@@ -16,6 +16,10 @@ RUN { \
     echo "post_max_size = 14M"; \
 } > /usr/local/etc/php/conf.d/uploads.ini
 
+# Dossier persistant pour les sessions PHP (monté en volume, voir docker-compose.yml)
+# afin qu'un rebuild du conteneur web ne déconnecte pas l'admin en local.
+RUN mkdir -p /var/www/sessions && chown www-data:www-data /var/www/sessions
+
 COPY . /var/www/html/
 
 # En local (Docker), autorise aussi localhost comme referer pour les images,

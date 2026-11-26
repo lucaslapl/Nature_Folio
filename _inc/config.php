@@ -35,6 +35,26 @@ try {
 }
 
 // --- Session (démarrée avant tout output pour pouvoir lire l'état admin partout) ---
+// Durée de vie longue (défaut 7 jours, surchargeable via ADMIN_SESSION_LIFETIME en secondes) :
+// le cookie de session persiste et le garbage collector serveur garde la session.
+$sessionLifetime = (int) (getenv('ADMIN_SESSION_LIFETIME') ?: 7 * 24 * 3600);
+ini_set('session.gc_maxlifetime', (string) $sessionLifetime);
+
+// En local Docker, on peut monter un dossier persistant pour les sessions
+// (PHP_SESSION_SAVE_PATH) afin qu'un rebuild du conteneur ne déconnecte pas.
+if (getenv('PHP_SESSION_SAVE_PATH')) {
+    session_save_path(getenv('PHP_SESSION_SAVE_PATH'));
+}
+
+session_set_cookie_params([
+    'lifetime' => $sessionLifetime,
+    'path' => '/',
+    'domain' => '',
+    'secure' => str_starts_with((string) (getenv('SITE_URL') ?: ''), 'https://'),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
