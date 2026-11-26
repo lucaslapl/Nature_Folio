@@ -14,7 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['submit'])) {
     exit;
 }
 
-$result = handle_species_insert($conn, 'lepido', $_POST, $_FILES);
+$descFields = desc_fields_for('lepido');
+$descLabels = array_map(fn($f) => $f['label'], $descFields);
+
+$result = handle_species_insert($conn, 'lepido', $_POST, $_FILES, $descLabels);
 
 if ($result['ok']) {
     header('Location: new_lepido.php?success=1');
@@ -43,6 +46,7 @@ $error = $result['error'];
             nameExample: 'Paon du jour',
             nameLatinExample: 'Aglais io',
             familleExample: 'Nymphalidé',
+            descFields: $descFields,
             error: $error
         );
         ?>

@@ -11,11 +11,29 @@ declare(strict_types=1);
  * @var string $nameExample exemple de nom commun
  * @var string $nameLatinExample exemple de nom latin
  * @var string $familleExample exemple de famille
+ * @var array<string, array{label:string, placeholder:string}> $descFields trame guidée (clé => label + placeholder)
  * @var string|null $error  message d'erreur à afficher
  * @var string|null $success message de succès à afficher
  */
 
-function render_species_form(string $action, string $entityLabel, string $nameExample, string $nameLatinExample, string $familleExample, ?string $error = null, ?string $success = null): void
+/**
+ * Préréglages de répartition proposés dans le formulaire admin.
+ *
+ * @return array<int, string>
+ */
+function repartition_presets(): array
+{
+    return [
+        'Observable sur tout le territoire métropolitain.',
+        'Observable sur tout le territoire métropolitain, sauf sur la côte méditerranéenne.',
+        'Présent sur les côtes atlantique et de la Manche.',
+        'Présent sur la côte méditerranéenne et en Corse.',
+        'Espèce de montagne : Alpes, Pyrénées, Massif central, Jura.',
+        'Présent dans le nord et l’est de la France.',
+    ];
+}
+
+function render_species_form(string $action, string $entityLabel, string $nameExample, string $nameLatinExample, string $familleExample, array $descFields, ?string $error = null, ?string $success = null): void
 {
     ?>
     <div class="form-card">
@@ -36,32 +54,32 @@ function render_species_form(string $action, string $entityLabel, string $nameEx
                 <input type="text" id="namelatin" name="namelatin" required placeholder="Ex : <?= e_attr($nameLatinExample) ?>">
             </div>
 
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="famille">Famille</label>
-                    <input type="text" id="famille" name="famille" required placeholder="Ex : <?= e_attr($familleExample) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="rarete">Rareté</label>
-                    <select id="rarete" name="rarete">
-                        <option value="Commune">Commune</option>
-                        <option value="Peu commune">Peu commune</option>
-                        <option value="Rare">Rare</option>
-                        <option value="Très rare">Très rare</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="famille">Famille</label>
+                <input type="text" id="famille" name="famille" required placeholder="Ex : <?= e_attr($familleExample) ?>">
             </div>
 
             <div class="form-group">
                 <label for="repartition">Répartition</label>
-                <textarea id="repartition" name="repartition" rows="3"></textarea>
-                <button type="button" class="btn-ghost" id="fillRepartition" data-value="Observable sur tout le territoire métropolitain.">Auto-remplir : territoire complet</button>
+                <select id="repartitionPreset" aria-label="Préréglage de répartition">
+                    <option value="">— Choisir un préréglage…</option>
+                    <?php foreach (repartition_presets() as $preset): ?>
+                        <option value="<?= e_attr($preset) ?>"><?= e($preset) ?></option>
+                    <?php endforeach; ?>
+                    <option value="__autre__">Autre (saisie libre ci-dessous)</option>
+                </select>
+                <textarea id="repartition" name="repartition" rows="3" placeholder="Décrivez la répartition géographique…"></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="3"></textarea>
-            </div>
+            <fieldset class="desc-block">
+                <legend>Description</legend>
+                <?php foreach ($descFields as $key => $field): ?>
+                <div class="form-group">
+                    <label for="desc-<?= e_attr($key) ?>"><?= e($field['label']) ?></label>
+                    <textarea id="desc-<?= e_attr($key) ?>" name="desc[<?= e_attr($key) ?>]" rows="2" placeholder="<?= e_attr($field['placeholder']) ?>"></textarea>
+                </div>
+                <?php endforeach; ?>
+            </fieldset>
 
             <div class="grid-2">
                 <div class="form-group">

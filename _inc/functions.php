@@ -52,6 +52,34 @@ function get_species(PDO $conn, string $table): array
 }
 
 /**
+ * Trame de description guidée du formulaire admin, selon le groupe d'espèces.
+ *
+ * @return array<string, array{label:string, placeholder:string}>
+ */
+function desc_fields_for(string $group): array
+{
+    if ($group === 'lepido') {
+        return [
+            'envergure'   => ['label' => 'Envergure', 'placeholder' => 'Ex : 30–40 mm'],
+            'ailes'       => ['label' => 'Ailes (dessus / dessous)', 'placeholder' => 'Ex : dessus orange tacheté de noir, dessous brun avec un ocelle…'],
+            'plantehote'  => ['label' => 'Plante-hôte de la chenille', 'placeholder' => 'Ex : ortie, ronce, plantain…'],
+            'periode'     => ['label' => 'Période de vol', 'placeholder' => 'Ex : mai–septembre, une ou deux générations'],
+            'habitat'     => ['label' => 'Habitat', 'placeholder' => 'Ex : prairies fleuries, lisières, haies…'],
+            'observation' => ['label' => 'Observation personnelle', 'placeholder' => 'Ex : posé sur une lavande, butinant au soleil…'],
+        ];
+    }
+
+    return [
+        'taille'       => ['label' => 'Taille / envergure', 'placeholder' => 'Ex : 15 cm, envergure 24–27 cm'],
+        'plumage'      => ['label' => 'Plumage & signes distinctifs', 'placeholder' => 'Ex : calotte noire, joues blanches, ventre jaune…'],
+        'chant'        => ['label' => 'Chant & cris', 'placeholder' => 'Ex : ti-ti-ti répété, cri de miaulement…'],
+        'habitat'      => ['label' => 'Habitat', 'placeholder' => 'Ex : forêts, parcs, jardins, haies…'],
+        'alimentation' => ['label' => 'Régime alimentaire', 'placeholder' => 'Ex : graines en hiver, insectes en été…'],
+        'observation'  => ['label' => 'Observation personnelle', 'placeholder' => 'Ex : observé ce jour-là en lisière, en train de chasser…'],
+    ];
+}
+
+/**
  * Rendu du <head> commun.
  *
  * @param array{title:string, description?:string, path:string, css?:array<string>} $page
@@ -173,7 +201,6 @@ function render_species_list(array $rows, array $familyColors = [], bool $skipEm
         $name = (string) $row['nom'];
         $nameLatin = (string) $row['nom_latin'];
         $famille = (string) $row['famille'];
-        $rarete = $row['rarete'] ?? null;
         $repartition = (string) $row['repartition'];
         $description = (string) $row['description'];
         $ficheinpn = $row['lien_inpn'] ?? '';
@@ -207,16 +234,15 @@ function render_species_list(array $rows, array $familyColors = [], bool $skipEm
                         </a>
                     <?php endif; ?>
                     <div class="detail-info">
+                        <?php if ($repartition !== '' || $description !== '' || $ficheinpn !== ''): ?>
                         <h4>Description &amp; observations</h4>
                         <?php if ($repartition !== ''): ?><p><?= e($repartition) ?></p><?php endif; ?>
-                        <?php if ($description !== ''): ?><p><?= e($description) ?></p><?php endif; ?>
+                        <?php if ($description !== ''): ?><p class="desc"><?= nl2br(e($description)) ?></p><?php endif; ?>
                         <?php if ($ficheinpn !== ''): ?>
                             <p><a href="<?= e_attr($ficheinpn) ?>" target="_blank" rel="noopener" class="inpn-link">Fiche INPN &#8599;</a></p>
                         <?php endif; ?>
+                        <?php endif; ?>
                         <div class="meta-grid">
-                            <?php if ($rarete): ?>
-                                <div class="meta-item"><span>Rareté</span><?= e((string) $rarete) ?></div>
-                            <?php endif; ?>
                             <?php if ($lieuphoto !== '' || $datephoto !== ''): ?>
                                 <div class="meta-item"><span>Lieu d'observation</span><?= e(trim($lieuphoto . ($datephoto !== '' ? ', le ' . $datephoto : ''), ', ')) ?></div>
                             <?php endif; ?>

@@ -28,7 +28,8 @@ require_login();
             entityLabel: 'un oiseau',
             nameExample: 'Mésange charbonnière',
             nameLatinExample: 'Parus major',
-            familleExample: 'Paridae'
+            familleExample: 'Paridae',
+            descFields: desc_fields_for('oiseaux')
         ); ?>
         <p class="back"><a href="../admin/logout.php">Se déconnecter</a></p>
     </main>

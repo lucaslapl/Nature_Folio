@@ -57,12 +57,32 @@ function secure_upload(array $file, string $destFolder, ?string &$error): ?strin
 }
 
 /**
+ * Construit la description textuelle à partir des champs guidés du formulaire.
+ * Chaque champ non vide devient une ligne « Label : valeur ».
+ *
+ * @param array<string, string> $descLabels clé => libellé (ex: 'taille' => 'Taille / envergure')
+ * @param array<string, mixed> $post
+ */
+function build_description(array $post, array $descLabels): string
+{
+    $parts = [];
+    foreach ($descLabels as $key => $label) {
+        $val = trim((string) ($post['desc'][$key] ?? ''));
+        if ($val !== '') {
+            $parts[] = $label . ' : ' . $val;
+        }
+    }
+    return implode("\n", $parts);
+}
+
+/**
  * Handler générique d'ajout d'espèce : upload des 2 images + INSERT.
  * Les données sont stockées BRUTES en BDD (l'échappement se fait à l'affichage).
  *
+ * @param array<string, string> $descLabels clés des champs guidés => libellés (pour la description)
  * @return array{ok:bool, error:?string}
  */
-function handle_species_insert(PDO $conn, string $table, array $post, array $files): array
+function handle_species_insert(PDO $conn, string $table, array $post, array $files, array $descLabels): array
 {
     $required = ['name', 'namelatin', 'famille'];
     foreach ($required as $field) {
@@ -93,9 +113,9 @@ function handle_species_insert(PDO $conn, string $table, array $post, array $fil
     $imageMinDb = $fsFolder . basename($imageMin);
 
     $sql = "INSERT INTO `$table`
-        (nom, nom_latin, famille, rarete, repartition, description, premiere_obs, lien_inpn, image_path, image_path_min, date_obs, lieu_obs)
+        (nom, nom_latin, famille, repartition, description, premiere_obs, lien_inpn, image_path, image_path_min, date_obs, lieu_obs)
         VALUES
-        (:nom, :nom_latin, :famille, :rarete, :repartition, :description, :premiere_obs, :lien_inpn, :image_path, :image_path_min, :date_obs, :lieu_obs)";
+        (:nom, :nom_latin, :famille, :repartition, :description, :premiere_obs, :lien_inpn, :image_path, :image_path_min, :date_obs, :lieu_obs)";
 
     try {
         $stmt = $conn->prepare($sql);
@@ -103,9 +123,8 @@ function handle_species_insert(PDO $conn, string $table, array $post, array $fil
             ':nom' => trim($post['name']),
             ':nom_latin' => trim($post['namelatin']),
             ':famille' => trim($post['famille']),
-            ':rarete' => $post['rarete'] ?? 'Commune',
             ':repartition' => trim($post['repartition'] ?? ''),
-            ':description' => trim($post['description'] ?? ''),
+            ':description' => build_description($post, $descLabels),
             ':premiere_obs' => $post['first-obs'] ?: null,
             ':lien_inpn' => trim($post['lien-inpn'] ?? ''),
             ':image_path' => $imageDb,

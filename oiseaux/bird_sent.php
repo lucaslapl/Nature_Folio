@@ -14,7 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['submit'])) {
     exit;
 }
 
-$result = handle_species_insert($conn, 'oiseaux', $_POST, $_FILES);
+$descFields = desc_fields_for('oiseaux');
+$descLabels = array_map(fn($f) => $f['label'], $descFields);
+
+$result = handle_species_insert($conn, 'oiseaux', $_POST, $_FILES, $descLabels);
 
 if ($result['ok']) {
     header('Location: new_bird.php?success=1');
@@ -44,6 +47,7 @@ $error = $result['error'];
             nameExample: 'Mésange charbonnière',
             nameLatinExample: 'Parus major',
             familleExample: 'Paridae',
+            descFields: $descFields,
             error: $error
         );
         ?>

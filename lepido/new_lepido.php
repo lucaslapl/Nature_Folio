@@ -28,7 +28,8 @@ require_login();
             entityLabel: 'un lépidoptère',
             nameExample: 'Paon du jour',
             nameLatinExample: 'Aglais io',
-            familleExample: 'Nymphalidé'
+            familleExample: 'Nymphalidé',
+            descFields: desc_fields_for('lepido')
         ); ?>
         <p class="back"><a href="../admin/logout.php">Se déconnecter</a></p>
     </main>

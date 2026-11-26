@@ -520,6 +520,26 @@ main {
     gap: 1rem;
 }
 
+.desc-block {
+    border: 1px dashed $border;
+    border-radius: 8px;
+    padding: 0.4rem 1rem 0.2rem;
+    margin: 0 0 1.1rem;
+
+    legend {
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: $muted;
+        padding: 0 0.4rem;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0.9rem;
+    }
+}
+
 .btn-primary {
     display: inline-block;
     background: $accent;

@@ -85,13 +85,17 @@ function toggleSpecies(btn) {
     });
 })();
 
-// Bouton "auto-remplir la répartition" dans les formulaires admin
+// Préréglage de la répartition dans les formulaires admin :
+// le select pré-remplit le textarea (qui reste éditable librement)
 document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('fillRepartition');
+    const preset = document.getElementById('repartitionPreset');
     const textarea = document.getElementById('repartition');
-    if (btn && textarea) {
-        btn.addEventListener('click', () => {
-            textarea.value = btn.dataset.value || '';
+    if (preset && textarea) {
+        preset.addEventListener('change', () => {
+            const v = preset.value;
+            if (v && v !== '__autre__') {
+                textarea.value = v;
+            }
         });
     }
 });
