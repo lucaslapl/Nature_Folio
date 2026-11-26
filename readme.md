@@ -36,6 +36,29 @@ Générer le hash admin :
 php -r "echo password_hash('ton-mot-de-passe', PASSWORD_DEFAULT);"
 ```
 
+## Déploiement en production
+
+Hébergement mutualisé (Apache/PHP direct, sans Docker) — checklist :
+
+1. **PHP** : version 8.1+ (8.3 recommandée), extensions `pdo_mysql`, `mbstring`, `iconv`, `session`. Les limites d'upload sont posées par `.user.ini` (6 Mo / 14 Mo).
+2. **Code** : déployer le dépôt git (le `.env` n'est PAS dans git) à la racine du vhost `nature.lucaslaplanche.fr`.
+3. **`.env` de prod** à créer à la main sur le serveur (voir `.env.example`) :
+   - `DB_DSN` / `DB_USERNAME` / `DB_PASSWORD` → base MySQL de prod
+   - `SITE_URL=https://nature.lucaslaplanche.fr`
+   - `MATOMO_URL` / `MATOMO_SITE_ID`
+   - `ADMIN_PASSWORD_HASH` → **changer impérativement** (ne pas garder le hash de démo)
+   - `ADMIN_SESSION_LIFETIME` optionnel (défaut 7 jours)
+4. **Base de prod** : faire un backup, puis exécuter la migration
+   `_docker/migrations/2026-11-26_cleanup_rarete_wip.sql` (supprime la colonne `rarete`,
+   vide les « En cours de rédaction », dates `0000-00-00` → NULL).
+5. **Permissions** : `_data/taxref_fr.csv` lisible par PHP ; `oiseaux/_photos/` et
+   `lepido/_photos/` **writable** par l'utilisateur PHP (uploads).
+6. **Sécurité** : `.htaccess` bloque `.env`, `_inc/`, `_data/`, les `.sql`/`.md`/`.log` ;
+   HTTPS forcé + HSTS sur le domaine prod ; hotlinking d'images bloqué hors domaine.
+7. **Tests post-déploiement** : accueil + 2 listes publiques, login admin
+   (`/admin/login.php`), pré-remplissage INPN sur une fiche, upload d'une photo de test,
+   vérifier que Matomo remonte des visites.
+
 ## Administration
 
 Les formulaires d'ajout d'espèces sont protégés par une session admin :
