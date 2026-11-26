@@ -52,8 +52,22 @@ function secure_upload(array $file, string $destFolder, ?string &$error): ?strin
         return null;
     }
 
-    // Chemin relatif depuis la racine du site (ex: oiseaux/_photos/xxx.jpg)
+    // Chemin renvoyé = dossier + nom (le chemin BDD est retravaillé par l'appelant)
     return $dest;
+}
+
+/**
+ * Upload optionnel (édition) : si aucun fichier n'est envoyé, $kept = true
+ * et on conserve l'image actuelle.
+ */
+function secure_upload_optional(array $file, string $destFolder, ?string &$error, ?bool &$kept): ?string
+{
+    $kept = false;
+    if (!isset($file['tmp_name']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        $kept = true;
+        return null;
+    }
+    return secure_upload($file, $destFolder, $error);
 }
 
 /**
@@ -76,14 +90,20 @@ function build_description(array $post, array $descLabels): string
 }
 
 /**
- * Handler générique d'ajout d'espèce : upload des 2 images + INSERT.
+ * Handler générique d'enregistrement d'espèce : INSERT (ajout) ou UPDATE (édition).
  * Les données sont stockées BRUTES en BDD (l'échappement se fait à l'affichage).
  *
  * @param array<string, string> $descLabels clés des champs guidés => libellés (pour la description)
+ * @param int|null $id id de l'espèce en édition, null en ajout
+ * @param array<string, mixed>|null $current row actuelle en édition (pour conserver les images si non remplacées)
  * @return array{ok:bool, error:?string}
  */
-function handle_species_insert(PDO $conn, string $table, array $post, array $files, array $descLabels): array
+function handle_species_save(PDO $conn, string $table, array $post, array $files, array $descLabels, ?int $id = null, ?array $current = null): array
 {
+    if (!in_array($table, ['oiseaux', 'lepido'], true)) {
+        return ['ok' => false, 'error' => 'Table inconnue.'];
+    }
+
     $required = ['name', 'namelatin', 'famille'];
     foreach ($required as $field) {
         if (trim($post[$field] ?? '') === '') {
@@ -91,51 +111,89 @@ function handle_species_insert(PDO $conn, string $table, array $post, array $fil
         }
     }
 
-    if (empty($files['imgMain']['tmp_name']) || empty($files['imgMini']['tmp_name'])) {
+    $editing = $id !== null;
+
+    if (!$editing && (empty($files['imgMain']['tmp_name']) || empty($files['imgMini']['tmp_name']))) {
         return ['ok' => false, 'error' => 'La photo principale et la miniature sont obligatoires.'];
     }
 
-    // Dossier filesystem relatif depuis la page handler (oiseaux/ ou lepido/)
-    $fsFolder = '_photos/';
+    // Dossier filesystem des photos : relatif à la page handler
+    // (ajout depuis oiseaux/lepido/ -> '_photos/', édition depuis admin/ -> '../<table>/_photos/')
+    $fsFolder = ($editing ? '../' : '') . $table . '/_photos/';
 
     $error = null;
-    $image = secure_upload($files['imgMain'], $fsFolder, $error);
-    if ($image === null) {
+    $kept = false;
+
+    // Chemins stockés en BDD, relatifs à la page d'affichage (oiseaux/ ou lepido/)
+    $imageDb = (string) ($current['image_path'] ?? '');
+    $imageMinDb = (string) ($current['image_path_min'] ?? '');
+
+    $image = secure_upload_optional($files['imgMain'] ?? [], $fsFolder, $error, $kept);
+    if ($image === null && !$kept) {
         return ['ok' => false, 'error' => 'Photo principale : ' . $error];
     }
-    $imageMin = secure_upload($files['imgMini'], $fsFolder, $error);
-    if ($imageMin === null) {
-        return ['ok' => false, 'error' => 'Miniature : ' . $error];
+    if ($image !== null) {
+        $imageDb = '_photos/' . basename($image);
     }
 
-    // Chemins stockés en BDD relatifs à la page d'affichage (oiseaux/ ou lepido/)
-    $imageDb = $fsFolder . basename($image);
-    $imageMinDb = $fsFolder . basename($imageMin);
+    $imageMin = secure_upload_optional($files['imgMini'] ?? [], $fsFolder, $error, $kept);
+    if ($imageMin === null && !$kept) {
+        return ['ok' => false, 'error' => 'Miniature : ' . $error];
+    }
+    if ($imageMin !== null) {
+        $imageMinDb = '_photos/' . basename($imageMin);
+    }
 
-    $sql = "INSERT INTO `$table`
-        (nom, nom_latin, famille, repartition, description, premiere_obs, lien_inpn, image_path, image_path_min, date_obs, lieu_obs)
-        VALUES
-        (:nom, :nom_latin, :famille, :repartition, :description, :premiere_obs, :lien_inpn, :image_path, :image_path_min, :date_obs, :lieu_obs)";
+    if (!$editing && ($imageDb === '' || $imageMinDb === '')) {
+        return ['ok' => false, 'error' => 'La photo principale et la miniature sont obligatoires.'];
+    }
+
+    $params = [
+        ':nom' => trim($post['name']),
+        ':nom_latin' => trim($post['namelatin']),
+        ':famille' => trim($post['famille']),
+        ':repartition' => trim($post['repartition'] ?? ''),
+        ':description' => build_description($post, $descLabels),
+        ':premiere_obs' => ($post['first-obs'] ?? '') ?: null,
+        ':lien_inpn' => trim($post['lien-inpn'] ?? ''),
+        ':image_path' => $imageDb,
+        ':image_path_min' => $imageMinDb,
+        ':date_obs' => ($post['date-photo'] ?? '') ?: null,
+        ':lieu_obs' => trim($post['lieu-photo'] ?? ''),
+    ];
+
+    if ($editing) {
+        $sql = "UPDATE `$table` SET
+            nom = :nom, nom_latin = :nom_latin, famille = :famille, repartition = :repartition,
+            description = :description, premiere_obs = :premiere_obs, lien_inpn = :lien_inpn,
+            image_path = :image_path, image_path_min = :image_path_min, date_obs = :date_obs, lieu_obs = :lieu_obs
+            WHERE id = :id";
+        $params[':id'] = $id;
+    } else {
+        $sql = "INSERT INTO `$table`
+            (nom, nom_latin, famille, repartition, description, premiere_obs, lien_inpn, image_path, image_path_min, date_obs, lieu_obs)
+            VALUES
+            (:nom, :nom_latin, :famille, :repartition, :description, :premiere_obs, :lien_inpn, :image_path, :image_path_min, :date_obs, :lieu_obs)";
+    }
 
     try {
         $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            ':nom' => trim($post['name']),
-            ':nom_latin' => trim($post['namelatin']),
-            ':famille' => trim($post['famille']),
-            ':repartition' => trim($post['repartition'] ?? ''),
-            ':description' => build_description($post, $descLabels),
-            ':premiere_obs' => $post['first-obs'] ?: null,
-            ':lien_inpn' => trim($post['lien-inpn'] ?? ''),
-            ':image_path' => $imageDb,
-            ':image_path_min' => $imageMinDb,
-            ':date_obs' => $post['date-photo'] ?: null,
-            ':lieu_obs' => trim($post['lieu-photo'] ?? ''),
-        ]);
+        $stmt->execute($params);
     } catch (PDOException $e) {
-        error_log('Insert failed: ' . $e->getMessage());
+        error_log(($editing ? 'Update' : 'Insert') . ' failed: ' . $e->getMessage());
         return ['ok' => false, 'error' => 'Erreur lors de l\'enregistrement en base de données.'];
     }
 
     return ['ok' => true, 'error' => null];
+}
+
+/**
+ * Handler d'ajout d'espèce : délègue à handle_species_save (rétrocompatible).
+ *
+ * @param array<string, string> $descLabels
+ * @return array{ok:bool, error:?string}
+ */
+function handle_species_insert(PDO $conn, string $table, array $post, array $files, array $descLabels): array
+{
+    return handle_species_save($conn, $table, $post, $files, $descLabels);
 }

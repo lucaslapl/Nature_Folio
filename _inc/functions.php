@@ -54,6 +54,84 @@ function get_species(PDO $conn, string $table): array
 }
 
 /**
+ * Récupère une espèce par son id (table restreinte aux deux tables du site).
+ */
+function get_species_by_id(PDO $conn, string $table, int $id): ?array
+{
+    if (!in_array($table, ['oiseaux', 'lepido'], true)) {
+        return null;
+    }
+    $stmt = $conn->prepare("SELECT * FROM `$table` WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch();
+    return $row ?: null;
+}
+
+/**
+ * Champs attendus pour une fiche complète (hors id/images gérées à part).
+ */
+function species_missing_fields(array $row): array
+{
+    $fields = [
+        'nom'         => 'Nom',
+        'nom_latin'   => 'Nom latin',
+        'famille'     => 'Famille',
+        'repartition' => 'Répartition',
+        'description' => 'Description',
+        'lien_inpn'   => 'Fiche INPN',
+    ];
+    $missing = [];
+    foreach ($fields as $key => $label) {
+        if (trim((string) ($row[$key] ?? '')) === '') {
+            $missing[] = $label;
+        }
+    }
+    if (trim((string) ($row['image_path'] ?? '')) === '') {
+        $missing[] = 'Photo';
+    }
+    return $missing;
+}
+
+/**
+ * Découpe une description stockée ("Label : valeur\nLabel2 : valeur2…") en champs
+ * guidés. Les lignes qui ne correspondent à aucun label connu sont renvoyées dans
+ * 'libre' (texte historique non structuré).
+ *
+ * @param array<string, array{label:string, placeholder:string}> $descFields
+ * @return array{fields: array<string, string>, libre: string}
+ */
+function parse_description(string $description, array $descFields): array
+{
+    $fields = [];
+    $libre = [];
+    $labelByKey = [];
+    foreach ($descFields as $key => $f) {
+        $labelByKey[mb_strtolower($f['label'])] = $key;
+    }
+
+    foreach (preg_split('/\r?\n/', $description) ?: [] as $line) {
+        $line = trim($line);
+        if ($line === '') {
+            continue;
+        }
+        if (preg_match('/^(.+?)\s*:\s*(.*)$/u', $line, $m) && isset($labelByKey[mb_strtolower($m[1])])) {
+            $fields[$labelByKey[mb_strtolower($m[1])]] = $m[2];
+        } else {
+            $libre[] = $line;
+        }
+    }
+
+    // Le texte libre historique part dans le champ observation s'il est vide
+    if ($libre !== [] && empty($fields['observation'])) {
+        $fields['observation'] = implode("\n", $libre);
+    } elseif ($libre !== []) {
+        $fields['observation'] = trim(($fields['observation'] ?? '') . "\n" . implode("\n", $libre));
+    }
+
+    return ['fields' => $fields, 'libre' => implode("\n", $libre)];
+}
+
+/**
  * Trame de description guidée du formulaire admin, selon le groupe d'espèces.
  *
  * @return array<string, array{label:string, placeholder:string}>
@@ -185,7 +263,7 @@ function render_footer(): void
         <div class="container">
             <p>&copy; <?= date('Y') ?> — <a href="<?= e_attr(SITE_URL) ?>/"><?= e(SITE_AUTHOR) ?></a></p>
             <?php if (is_logged_in()): ?>
-                <p class="admin-link"><a href="<?= e_attr(SITE_URL) ?>/oiseaux/new_bird.php">Administration</a> · <a href="<?= e_attr(SITE_URL) ?>/admin/logout.php">Se déconnecter</a></p>
+                <p class="admin-link"><a href="<?= e_attr(SITE_URL) ?>/admin/index.php">Administration</a> · <a href="<?= e_attr(SITE_URL) ?>/admin/logout.php">Se déconnecter</a></p>
             <?php endif; ?>
         </div>
     </footer>

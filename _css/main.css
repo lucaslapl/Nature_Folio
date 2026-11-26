@@ -726,3 +726,141 @@ main {
         gap: 0.5rem;
     }
 }
+
+/* ---------- Admin : hub + liste des espèces ---------- */
+.admin-hub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+.admin-hub-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: var(--transition);
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+    }
+
+    h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0.4rem 0 0.8rem;
+    }
+
+    .go {
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.88rem;
+    }
+}
+
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+
+    .btn-ghost {
+        margin-top: 0;
+        text-decoration: none;
+
+        &.active {
+            background: var(--accent);
+            color: #fff;
+        }
+    }
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-size: 0.9rem;
+
+    th, td {
+        text-align: left;
+        padding: 0.7rem 0.9rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+
+    th {
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        background: var(--bg);
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    .btn-ghost {
+        margin-top: 0;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+}
+
+.badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.badge-ok {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.badge-wip {
+    background: #fdf3e0;
+    color: #9a6a00;
+}
+
+.current-img img {
+    display: block;
+    max-width: 90px;
+    max-height: 70px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-bottom: 0.4rem;
+    object-fit: cover;
+}
+
+@media (max-width: 640px) {
+    .admin-hub {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table {
+        font-size: 0.82rem;
+
+        th:nth-child(2), td:nth-child(2) {
+            display: none;
+        }
+    }
+}

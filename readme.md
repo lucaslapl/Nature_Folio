@@ -45,6 +45,12 @@ Les formulaires d'ajout d'espèces sont protégés par une session admin :
 
 Accès via `admin/login.php` (mot de passe défini par `ADMIN_PASSWORD_HASH`). Déconnexion : `admin/logout.php`.
 
+- `admin/index.php` — hub admin (listes oiseaux / lépidoptères)
+- `admin/especes.php?table=oiseaux|lepido[&filtre=incomplets]` — liste des espèces avec badge de complétude (champs manquants) et lien « Modifier »
+- `admin/edit_espece.php?table=…&id=…` — édition d'une fiche existante : formulaire pré-rempli (la description structurée est re-découpée en champs guidés), images optionnelles (l'actuelle est conservée si on n'en renvoie pas), bouton « Pré-remplir via l'INPN » pour compléter les champs vides depuis TAXREF
+- `admin/espece_update.php` — enregistre les modifications (UPDATE)
+- Formulaires d'ajout : `oiseaux/new_bird.php`, `lepido/new_lepido.php`
+
 Les uploads sont sécurisés : extension whitelist, vérification `getimagesize()`, taille max 5 Mo, nom de fichier aléatoire.
 
 ## Structure
@@ -62,6 +68,7 @@ _data/                  Extrait TAXREF (NON servi directement, bloqué par .htac
   taxref_fr.csv         Oiseaux + papillons de jour présents en France métro (~4 900 taxons)
   build_taxref_extract.php  Script CLI de régénération depuis le TAXREF v18 complet
 admin/                  login.php / logout.php / inpn_lookup.php (endpoint JSON TAXREF, session requise)
+                        index.php / especes.php / edit_espece.php / espece_update.php (gestion des fiches existantes)
 oiseaux/  lepido/       Listes publiques + formulaires admin + _photos/
 _css/main.css           Thème (clair) en CSS pur — édité directement, servi tel quel
 _js/main.js             Filtre, accordéon, lightbox (vanilla, sans dépendance)
