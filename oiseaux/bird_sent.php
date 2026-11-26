@@ -48,6 +48,7 @@ $error = $result['error'];
             nameLatinExample: 'Parus major',
             familleExample: 'Paridae',
             descFields: $descFields,
+            group: 'oiseaux',
             error: $error
         );
         ?>

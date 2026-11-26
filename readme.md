@@ -57,7 +57,11 @@ _inc/                   Code partagé (NON servi directement, bloqué par .htacc
   auth.php              Session admin (login/logout/require_login)
   upload.php            Upload sécurisé + insertion générique
   species-form.php      Template du formulaire d'ajout
-admin/                  login.php / logout.php
+  taxref.php            Recherche dans l'extrait TAXREF local (pré-remplissage INPN)
+_data/                  Extrait TAXREF (NON servi directement, bloqué par .htaccess)
+  taxref_fr.csv         Oiseaux + papillons de jour présents en France métro (~4 900 taxons)
+  build_taxref_extract.php  Script CLI de régénération depuis le TAXREF v18 complet
+admin/                  login.php / logout.php / inpn_lookup.php (endpoint JSON TAXREF, session requise)
 oiseaux/  lepido/       Listes publiques + formulaires admin + _photos/
 _css/main.css           Thème (clair) en CSS pur — édité directement, servi tel quel
 _js/main.js             Filtre, accordéon, lightbox (vanilla, sans dépendance)
@@ -67,13 +71,29 @@ _js/main.js             Filtre, accordéon, lightbox (vanilla, sans dépendance)
 
 Le thème est en **CSS pur** (`_css/main.css`, servi directement par `_inc/functions.php`) : custom properties dans `:root`, nesting natif. Aucun build, aucune dépendance npm.
 
+## Pré-remplissage INPN (TAXREF)
+
+Les formulaires admin (`new_bird.php`, `new_lepido.php`) proposent une autocomplétion
+du nom latin et un bouton « Pré-remplir via l'INPN » : recherche dans `_data/taxref_fr.csv`
+(extrait du TAXREF v18 INPN, licence ouverte) via `admin/inpn_lookup.php`, puis remplissage
+automatique des champs vides (nom vernaculaire, famille, lien INPN, préréglage de répartition
+si l'espèce est présente en France métropolitaine).
+
+Régénérer l'extrait quand TAXREF évolue :
+
+```bash
+php _data/build_taxref_extract.php /chemin/vers/TAXREFv18.txt
+```
+
+Le TAXREF complet (~300 Mo) n'est pas versionné ; seul l'extrait CSV l'est.
+
 ## Sécurité
 
 - Toutes les sorties HTML sont échappées (`htmlspecialchars` via `e()`)
 - Requêtes préparées PDO partout
 - Formulaires admin protégés par session + `noindex`
 - Upload : extension + contenu réel vérifiés, nom aléatoire
-- `.htaccess` : bloque `_inc/`, `.env`, fichiers sensibles ; headers de sécurité ; cache statiques
+- `.htaccess` : bloque `_inc/`, `_data/`, `.env`, fichiers sensibles ; headers de sécurité ; cache statiques
 
 ## Photos
 

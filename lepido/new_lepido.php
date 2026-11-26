@@ -29,7 +29,8 @@ require_login();
             nameExample: 'Paon du jour',
             nameLatinExample: 'Aglais io',
             familleExample: 'Nymphalidé',
-            descFields: desc_fields_for('lepido')
+            descFields: desc_fields_for('lepido'),
+            group: 'lepido'
         ); ?>
         <p class="back"><a href="../admin/logout.php">Se déconnecter</a></p>
     </main>

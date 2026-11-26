@@ -47,6 +47,7 @@ $error = $result['error'];
             nameLatinExample: 'Aglais io',
             familleExample: 'Nymphalidé',
             descFields: $descFields,
+            group: 'lepido',
             error: $error
         );
         ?>

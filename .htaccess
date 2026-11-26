@@ -10,8 +10,9 @@
     Require all denied
 </FilesMatch>
 
-# Bloque l'accès direct au dossier _inc/
+# Bloque l'accès direct aux dossiers internes (_inc/, _data/)
 RedirectMatch 403 ^/_inc/.*$
+RedirectMatch 403 ^/_data/.*$
 
 # Désactive l'indexation des répertoires
 Options -Indexes

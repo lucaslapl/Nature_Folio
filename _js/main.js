@@ -99,3 +99,91 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Pré-remplissage INPN (TAXREF local) dans les formulaires admin :
+// autocomplétion du nom latin + bouton "Pré-remplir via l'INPN"
+document.addEventListener('DOMContentLoaded', () => {
+    const latin = document.getElementById('namelatin');
+    const datalist = document.getElementById('taxref-suggest');
+    const btn = document.getElementById('inpnFill');
+    const status = document.getElementById('inpnStatus');
+    if (!latin || !btn) return;
+
+    const nameInput = document.getElementById('name');
+    const familleInput = document.getElementById('famille');
+    const lienInput = document.getElementById('lien-inpn');
+    const repTextarea = document.getElementById('repartition');
+    const repPreset = document.getElementById('repartitionPreset');
+    const groupe = btn.dataset.groupe || '';
+    const endpoint = '../admin/inpn_lookup.php';
+
+    async function lookup(q) {
+        if (!q || q.trim().length < 2) return [];
+        try {
+            const res = await fetch(endpoint + '?q=' + encodeURIComponent(q) + (groupe ? '&groupe=' + groupe : ''));
+            if (!res.ok) return [];
+            const data = await res.json();
+            return data.results || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function setStatus(msg, ok) {
+        if (status) {
+            status.textContent = msg;
+            status.classList.toggle('error', !ok);
+        }
+    }
+
+    // Remplit les champs vides à partir d'une fiche TAXREF
+    function applyResult(r) {
+        if (nameInput && !nameInput.value && r.nom_vern) nameInput.value = r.nom_vern;
+        if (familleInput && !familleInput.value && r.famille) familleInput.value = r.famille;
+        if (latin && !latin.value && r.nom) latin.value = r.nom;
+        if (lienInput && !lienInput.value && r.url_inpn) lienInput.value = r.url_inpn;
+        if (repTextarea && repPreset && !repTextarea.value && r.fr === 'P') {
+            const opt = Array.from(repPreset.options).find(o => o.value.includes('tout le territoire métropolitain.'));
+            if (opt) {
+                repPreset.value = opt.value;
+                repTextarea.value = opt.value;
+            }
+        }
+        setStatus('INPN : ' + r.nom + (r.nom_vern ? ' — ' + r.nom_vern : '') + ' (' + r.famille + ', cd_nom ' + r.cd_ref + ')', true);
+    }
+
+    // Autocomplétion du nom latin (datalist alimenté par TAXREF)
+    let debounce = null;
+    if (datalist) {
+        latin.addEventListener('input', () => {
+            clearTimeout(debounce);
+            debounce = setTimeout(async () => {
+                const results = await lookup(latin.value);
+                datalist.innerHTML = '';
+                for (const r of results) {
+                    const opt = document.createElement('option');
+                    opt.value = r.nom;
+                    opt.label = (r.nom_vern ? r.nom_vern + ' — ' : '') + r.famille;
+                    datalist.appendChild(opt);
+                }
+            }, 250);
+        });
+        latin.addEventListener('change', async () => {
+            const results = await lookup(latin.value);
+            const exact = results.find(r => r.nom.toLowerCase() === latin.value.trim().toLowerCase());
+            if (exact) applyResult(exact);
+        });
+    }
+
+    // Bouton : pré-remplit depuis le nom latin, ou depuis le cd_nom du lien INPN
+    btn.addEventListener('click', async () => {
+        const q = latin.value.trim() || (lienInput ? lienInput.value.trim() : '');
+        setStatus('Recherche dans le référentiel INPN…', true);
+        const results = await lookup(q);
+        if (results.length === 0) {
+            setStatus('Aucun résultat INPN pour « ' + q + ' » — vérifiez le nom latin.', false);
+            return;
+        }
+        applyResult(results[0]);
+    });
+});

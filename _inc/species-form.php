@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @var string $nameLatinExample exemple de nom latin
  * @var string $familleExample exemple de famille
  * @var array<string, array{label:string, placeholder:string}> $descFields trame guidée (clé => label + placeholder)
+ * @var string $group       groupe INPN : 'oiseaux' | 'lepido' (filtre les suggestions TAXREF)
  * @var string|null $error  message d'erreur à afficher
  * @var string|null $success message de succès à afficher
  */
@@ -33,7 +34,7 @@ function repartition_presets(): array
     ];
 }
 
-function render_species_form(string $action, string $entityLabel, string $nameExample, string $nameLatinExample, string $familleExample, array $descFields, ?string $error = null, ?string $success = null): void
+function render_species_form(string $action, string $entityLabel, string $nameExample, string $nameLatinExample, string $familleExample, array $descFields, string $group, ?string $error = null, ?string $success = null): void
 {
     ?>
     <div class="form-card">
@@ -51,7 +52,10 @@ function render_species_form(string $action, string $entityLabel, string $nameEx
 
             <div class="form-group">
                 <label for="namelatin">Nom latin</label>
-                <input type="text" id="namelatin" name="namelatin" required placeholder="Ex : <?= e_attr($nameLatinExample) ?>">
+                <input type="text" id="namelatin" name="namelatin" required list="taxref-suggest" autocomplete="off" placeholder="Ex : <?= e_attr($nameLatinExample) ?>">
+                <datalist id="taxref-suggest"></datalist>
+                <button type="button" class="btn-ghost" id="inpnFill" data-groupe="<?= e_attr($group) ?>">Pré-remplir via l'INPN</button>
+                <p class="inpn-status" id="inpnStatus" role="status"></p>
             </div>
 
             <div class="form-group">

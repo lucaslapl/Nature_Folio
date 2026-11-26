@@ -29,7 +29,8 @@ require_login();
             nameExample: 'Mésange charbonnière',
             nameLatinExample: 'Parus major',
             familleExample: 'Paridae',
-            descFields: desc_fields_for('oiseaux')
+            descFields: desc_fields_for('oiseaux'),
+            group: 'oiseaux'
         ); ?>
         <p class="back"><a href="../admin/logout.php">Se déconnecter</a></p>
     </main>
