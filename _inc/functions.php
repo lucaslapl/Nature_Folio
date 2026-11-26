@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/auth.php';
+
 /**
  * Échappe une valeur pour un affichage HTML sûr (XSS).
  */
@@ -182,6 +184,9 @@ function render_footer(): void
     <footer class="site-footer">
         <div class="container">
             <p>&copy; <?= date('Y') ?> — <a href="<?= e_attr(SITE_URL) ?>/"><?= e(SITE_AUTHOR) ?></a></p>
+            <?php if (is_logged_in()): ?>
+                <p class="admin-link"><a href="<?= e_attr(SITE_URL) ?>/oiseaux/new_bird.php">Administration</a> · <a href="<?= e_attr(SITE_URL) ?>/admin/logout.php">Se déconnecter</a></p>
+            <?php endif; ?>
         </div>
     </footer>
     <?php

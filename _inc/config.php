@@ -34,6 +34,11 @@ try {
     die('Erreur de connexion à la base de données.');
 }
 
+// --- Session (démarrée avant tout output pour pouvoir lire l'état admin partout) ---
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // --- Constantes du site ---
 define('SITE_NAME', 'Lucas LAPLANCHE — Portfolio naturaliste');
 define('SITE_URL', getenv('SITE_URL') ?: 'https://nature.lucaslaplanche.fr');

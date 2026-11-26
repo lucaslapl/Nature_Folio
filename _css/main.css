@@ -687,6 +687,12 @@ main {
         text-decoration: none;
         &:hover { text-decoration: underline; }
     }
+
+    .admin-link {
+        margin-top: 0.4rem;
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
 }
 
 /* ---------- Responsive ---------- */
