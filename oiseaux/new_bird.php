@@ -37,6 +37,6 @@ require_login();
 
     <?php render_footer(); ?>
 
-    <script src="../_js/main.js" defer></script>
+    <script src="<?= asset_url('_js/main.js', 'oiseaux/new_bird.php') ?>" defer></script>
 </body>
 </html>

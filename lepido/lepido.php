@@ -43,6 +43,6 @@ $familyColors = [
 
     <?php render_footer(); ?>
 
-    <script src="../_js/main.js" defer></script>
+    <script src="<?= asset_url('_js/main.js', 'lepido/lepido.php') ?>" defer></script>
 </body>
 </html>

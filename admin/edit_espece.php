@@ -73,6 +73,6 @@ $error = isset($_GET['error']) ? (string) $_GET['error'] : null;
 
     <?php render_footer(); ?>
 
-    <script src="../_js/main.js" defer></script>
+    <script src="<?= asset_url('_js/main.js', 'admin/edit_espece.php') ?>" defer></script>
 </body>
 </html>

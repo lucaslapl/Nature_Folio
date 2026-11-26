@@ -160,6 +160,20 @@ function desc_fields_for(string $group): array
 }
 
 /**
+ * URL d'un asset (css/js) avec cache-busting par date de fichier :
+ * chaque déploiement change le filemtime, donc l'URL change et le
+ * navigateur recharge l'asset malgré le cache long posé par .htaccess.
+ */
+function asset_url(string $path, string $pagePath): string
+{
+    $depth = substr_count($pagePath, '/');
+    $prefix = $depth > 0 ? str_repeat('../', $depth) : '';
+    $file = __DIR__ . '/../' . $path;
+    $v = is_file($file) ? filemtime($file) : time();
+    return $prefix . $path . '?v=' . $v;
+}
+
+/**
  * Rendu du <head> commun.
  *
  * @param array{title:string, description?:string, path:string, css?:array<string>} $page
@@ -177,7 +191,6 @@ function render_head(array $page): void
     $prefix = $depth > 0 ? str_repeat('../', $depth) : '';
 
     $canonical = SITE_URL . '/' . $path;
-    $cssMain = $prefix . '_css/main.css';
     ?>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -209,9 +222,9 @@ function render_head(array $page): void
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
-    <link rel="stylesheet" href="<?= e_attr($cssMain) ?>">
+    <link rel="stylesheet" href="<?= e_attr(asset_url('_css/main.css', $path)) ?>">
     <?php foreach ($css as $href): ?>
-    <link rel="stylesheet" href="<?= e_attr($prefix . $href) ?>">
+    <link rel="stylesheet" href="<?= e_attr(asset_url($href, $path)) ?>">
     <?php endforeach; ?>
 
     <!-- Matomo (analytics auto-hébergé, remplace Google Analytics) -->

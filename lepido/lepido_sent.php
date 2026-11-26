@@ -53,5 +53,7 @@ $error = $result['error'];
         ?>
     </main>
     <?php render_footer(); ?>
+
+    <script src="<?= asset_url('_js/main.js', 'lepido/lepido_sent.php') ?>" defer></script>
 </body>
 </html>
